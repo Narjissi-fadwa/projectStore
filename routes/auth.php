@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -34,6 +35,16 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
+// Single role
+Route::get('/admin', function () {
+    return view('admin.dashboard');
+})->middleware(['auth', 'role:admin']);
+
+// Multiple roles
+Route::get('/seller-dashboard', function () {
+    return view('seller.dashboard');
+})->middleware(['auth', 'role:admin,seller'])->name('seller.dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
@@ -57,3 +68,19 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
+
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::patch('/admin/users/{user}/role', [AdminController::class, 'updateRole'])->name('admin.update-role');
+});
+
+Route::get('/products', function () {
+    return view('customer.products');
+})->middleware(['auth'])->name('customer.products');
+
+
+
+
+
+

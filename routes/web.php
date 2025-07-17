@@ -17,4 +17,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/test-admin', function () {
+    return 'Admin access works!';
+})->middleware(['auth', 'role:admin']);
+
+Route::get('/products', function () {
+    return view('customer.products');
+})->name('customer.products');
+
+Route::get('/seller/add-product', function () {
+    return view('seller.add-product');
+})->middleware(['auth', 'role:seller'])->name('seller.add-product');
+
 require __DIR__.'/auth.php';
+
+
+
